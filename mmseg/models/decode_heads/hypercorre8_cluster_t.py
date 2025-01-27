@@ -597,7 +597,7 @@ class Cluster_layer(nn.Module):
         self.inner_center = inner_center
         self.use_kmeans = use_kmeans # only test kmeans
 
-        self.test_SAM = True
+        self.test_SAM = False
 
         self.sim_alpha = nn.Parameter(torch.ones(1))
         self.sim_beta = nn.Parameter(torch.zeros(1))
