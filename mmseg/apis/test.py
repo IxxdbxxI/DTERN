@@ -30,7 +30,7 @@ def np2tmp(array, temp_file_name=None):
         temp_file_name = tempfile.NamedTemporaryFile(
             suffix='.npy', prefix='/kaggle/working/outs/',delete=False).name
     # np.save(temp_file_name, array)
-    image = Image.fromarray(array)
+    image = Image.fromarray(array.astype(np.uint8))
     image.save(temp_file_name)
     return temp_file_name
 
