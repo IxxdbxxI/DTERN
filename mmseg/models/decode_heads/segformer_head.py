@@ -21,34 +21,34 @@ import attr
 from IPython import embed
 
 import cv2
-from .hypercorre import hypercorre_topk2
-from .hypercorre2 import hypercorre_topk2 as hypercorre_topk21 # linear_qkv_sim_thw
-from .hypercorre3 import hypercorre_topk2 as hypercorre_topk31 #cnn_qk_liner_v_sim_thw
-from .hypercorre4 import hypercorre_topk2 as hypercorre_topk41 #cnn_qk_cnn_v_sim_hw_out_t
-from .hypercorre5 import hypercorre_topk2 as hypercorre_topk51 #CAT blocks for cross and time refiner(dvis)
-from .hypercorre6 import hypercorre_topk2 as hypercorre_topk61 #CAT blocks and Segdeformer for time and ratio fusion all
-from .fusion_hypercorre5_6 import hypercorre_topk2 as hypercorre_topk71 #CAT_blk and PAGFM for ratio fusion and Segdeformer  for time fusion
-from .hypercorre7_maskguide import hypercorre_topk2 as hypercorre_topk81 #CAT blocks and Segdeformer for time and ratio fusion all and mask guided
+# from .hypercorre import hypercorre_topk2
+# from .hypercorre2 import hypercorre_topk2 as hypercorre_topk21 # linear_qkv_sim_thw
+# from .hypercorre3 import hypercorre_topk2 as hypercorre_topk31 #cnn_qk_liner_v_sim_thw
+# from .hypercorre4 import hypercorre_topk2 as hypercorre_topk41 #cnn_qk_cnn_v_sim_hw_out_t
+# from .hypercorre5 import hypercorre_topk2 as hypercorre_topk51 #CAT blocks for cross and time refiner(dvis)
+# from .hypercorre6 import hypercorre_topk2 as hypercorre_topk61 #CAT blocks and Segdeformer for time and ratio fusion all
+# from .fusion_hypercorre5_6 import hypercorre_topk2 as hypercorre_topk71 #CAT_blk and PAGFM for ratio fusion and Segdeformer  for time fusion
+# from .hypercorre7_maskguide import hypercorre_topk2 as hypercorre_topk81 #CAT blocks and Segdeformer for time and ratio fusion all and mask guided
 from .hypercorre8_cluster_t import hypercorre_topk2 as hypercorre_topk91 #Cluster Block(paca_vit) for t and Segdeformer 
-from .hypercorre8_cluster_t_CL import hypercorre_topk2 as hypercorre_topk92 #Cluster using CL 
+# from .hypercorre8_cluster_t_CL import hypercorre_topk2 as hypercorre_topk92 #Cluster using CL 
 
-from .hypercorre8_cluster2_t import hypercorre_topk2 as hypercorre_topk101 #Cluster Block(cluster former) for t and Segdeformer 
-# from .hypercorre8_cluster3_t import hypercorre_topk2 as hypercorre_topk101 #Cluster Block(cluster former) for t and Segdeformer (layer2 加了mem交互,transseg将聚类数目修改由150为124)
+# from .hypercorre8_cluster2_t import hypercorre_topk2 as hypercorre_topk101 #Cluster Block(cluster former) for t and Segdeformer 
+# # from .hypercorre8_cluster3_t import hypercorre_topk2 as hypercorre_topk101 #Cluster Block(cluster former) for t and Segdeformer (layer2 加了mem交互,transseg将聚类数目修改由150为124)
 
-from .hypercorre8_cluster4_t import hypercorre_topk2 as hypercorre_topk111 #Cluster Block(cluster former) for t and Segdeformer，加入近亲融合，将flash_atten修改成center之间的,这个拉近了类间距
+# from .hypercorre8_cluster4_t import hypercorre_topk2 as hypercorre_topk111 #Cluster Block(cluster former) for t and Segdeformer，加入近亲融合，将flash_atten修改成center之间的,这个拉近了类间距
 
-from .hypercorre8_cluster5_t import hypercorre_topk2 as hypercorre_topk121 #融合paca-vit的聚类和cluster-former的聚类分配，没有融合t,聚类数目是t*n_cluster
-from .hypercorre8_cluster6_t import hypercorre_topk2 as hypercorre_topk131 #先融合时间t（对t加权求和），再更新cluster，cluster-former的聚类分配,聚类数目是n_cluster
-from .hypercorre10 import hypercorre_topk2 as hypercorre_topk10 # 辅助损失增强一致性
-from .hypercorre8_cluster_t_add_norm import hypercorre_topk2 as hypercorre_topk_add_norm # metaformer
-from .hypercorre8_c_further import hypercorre_topk2 as hypercorre_topk_c_further # cffm c_further
-# test for ratio fusion
-# from .fdsf import FDSF,PagFM 
-from mmseg.models.backbones.pixel_decoder import PixelDecoder
-from mmseg.models.utils.detectron2_layers import ShapeSpec
+# from .hypercorre8_cluster5_t import hypercorre_topk2 as hypercorre_topk121 #融合paca-vit的聚类和cluster-former的聚类分配，没有融合t,聚类数目是t*n_cluster
+# from .hypercorre8_cluster6_t import hypercorre_topk2 as hypercorre_topk131 #先融合时间t（对t加权求和），再更新cluster，cluster-former的聚类分配,聚类数目是n_cluster
+# from .hypercorre10 import hypercorre_topk2 as hypercorre_topk10 # 辅助损失增强一致性
+# from .hypercorre8_cluster_t_add_norm import hypercorre_topk2 as hypercorre_topk_add_norm # metaformer
+# from .hypercorre8_c_further import hypercorre_topk2 as hypercorre_topk_c_further # cffm c_further
+# # test for ratio fusion
+# # from .fdsf import FDSF,PagFM 
+# from mmseg.models.backbones.pixel_decoder import PixelDecoder
+# from mmseg.models.utils.detectron2_layers import ShapeSpec
 
 
-from mmseg.models.necks import EMCAD
+# from mmseg.models.necks import EMCAD
 from .utils.utils import save_cluster_labels
 import time
 from ..builder import build_loss
