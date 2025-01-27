@@ -108,7 +108,7 @@ def single_gpu_test(model,
 
 def multi_gpu_test(model,
                    data_loader,
-                   tmpdir="/root/workspace/XU/Code/VSS-MRCFA-main/results/Cluster_Segdeformer_124_capa_vit_cluster_block2_srps2_mit_b0",
+                   tmpdir="/kaggle/working/results",
                    gpu_collect=False,
                    efficient_test=False):
     """Test model with multiple gpus.
@@ -151,7 +151,7 @@ def multi_gpu_test(model,
         # dir_pred = '/root/workspace/XU/Code/VSS-MRCFA-main/results/paca_vit_124_aux_loss_1_16/'+pre_file_name # Cluster_Segdeformer_124_capa_vit_cluster_block2_dw_pw_repair_inner_center 
         # dir_pred = '/root/workspace/XU/Code/VSS-MRCFA-main/results/Cluster_Segdeformer_124_capa_vit_tmp/'+pre_file_name #Cluster_Segdeformer_124_capa_vit_cluster_block2_repair
         # dir_pred = '/root/workspace/XU/Code/VSS-MRCFA-main/results/paca_vit_127_block2_2/'+pre_file_name # lsk2 iter_15200
-        dir_pred = '/root/workspace/XU/Code/VSS-MRCFA-main/results/Cluster_Segdeformer_124_capa_vit_cluster_block2_srps2_mit_b0/'+pre_file_name # lsk3  iter_15600
+        dir_pred = '/kaggle/working/results/'+pre_file_name # lsk3  iter_15600
         # dir_pred = '/root/workspace/XU/Code/VSS-MRCFA-main/results/Cluster_Segdeformer_124_capa_vit_cluster_block2_srps2_mit_b1/'+pre_file_name  # Cluster_Segdeformer_124_capa_vit_cluster_block2_dw_pw_repair_inner_center_15600
 
 
