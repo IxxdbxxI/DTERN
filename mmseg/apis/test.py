@@ -28,7 +28,7 @@ def np2tmp(array, temp_file_name=None):
 
     if temp_file_name is None:
         temp_file_name = tempfile.NamedTemporaryFile(
-            suffix='.npy', prefix='/root/workspace/XU/Code/VSS-MRCFA-main/results/outs/',delete=False).name
+            suffix='.npy', prefix='/kaggle/working/outs/',delete=False).name
     np.save(temp_file_name, array)
     return temp_file_name
 
