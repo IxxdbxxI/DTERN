@@ -60,6 +60,16 @@ def single_gpu_test(model,
     # print("single_gpu_test")
 
     for i, data in enumerate(data_loader):
+        file_name = data['img_metas'][0].data[0][0]['filename']
+        pre_file_name = file_name.split('/')[-3]
+        dir_pred = '/kaggle/working/results/'+pre_file_name # lsk3  iter_15600
+
+        if not os.path.exists(dir_pred):
+            os.mkdir(dir_pred)
+        last_file_name = file_name.split('/')[-1].replace('.jpg', '.npy')
+        last_file_name = last_file_name.split('/')[-1].replace('.png', '.npy')
+        temp_file_name = os.path.join(dir_pred, last_file_name)
+
         with torch.no_grad():
             result = model(return_loss=False, **data)
         if show or out_dir:
@@ -89,11 +99,11 @@ def single_gpu_test(model,
 
         if isinstance(result, list):
             if efficient_test:
-                result = [np2tmp(_) for _ in result]
+                result = [np2tmp(_,temp_file_name=temp_file_name) for _ in result]
             results.extend(result)
         else:
             if efficient_test:
-                result = np2tmp(result)
+                result = np2tmp(result,temp_file_name=temp_file_name)
             results.append(result)
 
         if not isinstance(data['img'][0], list):
