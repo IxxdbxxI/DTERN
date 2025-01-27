@@ -3,7 +3,7 @@ import os.path as osp
 import pickle
 import shutil
 import tempfile
-
+from PIL import Image
 import mmcv
 import numpy as np
 import torch
@@ -29,7 +29,9 @@ def np2tmp(array, temp_file_name=None):
     if temp_file_name is None:
         temp_file_name = tempfile.NamedTemporaryFile(
             suffix='.npy', prefix='/kaggle/working/outs/',delete=False).name
-    np.save(temp_file_name, array)
+    # np.save(temp_file_name, array)
+    image = Image.fromarray(array)
+    image.save(temp_file_name)
     return temp_file_name
 
 
@@ -69,7 +71,7 @@ def single_gpu_test(model,
         last_file_name = file_name.split('/')[-1].replace('.jpg', '.npy')
         last_file_name = last_file_name.split('/')[-1].replace('.png', '.npy')
         temp_file_name = os.path.join(dir_pred, last_file_name)
-
+        temp_file_name = temp_file_name.replace('.npy','.png')
         with torch.no_grad():
             result = model(return_loss=False, **data)
         if show or out_dir:
