@@ -734,7 +734,7 @@ class Cluster_layer(nn.Module):
             use_separate_proj_weight=True,
             training=self.training,
             need_weights=not self.training,  # for visualization
-            average_attn_weights=False,
+            # average_attn_weights=False,
         )
         out = rearrange(out,"n b c -> b n c")
         out = self.proj_drop(out)
