@@ -59,12 +59,14 @@ def single_gpu_test(model,
     model.eval()
     results = []
     dataset = data_loader.dataset
-    prog_bar = mmcv.ProgressBar(len(dataset))
+    # prog_bar = mmcv.ProgressBar(len(dataset))
     # print("single_gpu_test")
 
     for i, data in enumerate(data_loader):
         file_name = data['img_metas'][0].data[0][0]['filename']
-        if lists is not None and file_name in lists: 
+        cd_name = file_name.split('/')[-3]
+        print("cd_name",cd_name)
+        if lists is not None and cd_name in lists: 
             pre_file_name = file_name.split('/')[-3]
             dir_pred = '/kaggle/working/results/'+pre_file_name # lsk3  iter_15600
 
@@ -132,13 +134,13 @@ def single_gpu_test(model,
                     plt.show()
 
 
-        if not isinstance(data['img'][0], list):
-            batch_size = data['img'][0].size(0)
-        else:
-            batch_size = data['img'][0][0].size(0)
-        # print(data['img'][0].shape)
-        for _ in range(batch_size):
-            prog_bar.update()
+        # if not isinstance(data['img'][0], list):
+        #     batch_size = data['img'][0].size(0)
+        # else:
+        #     batch_size = data['img'][0][0].size(0)
+        # # print(data['img'][0].shape)
+        # for _ in range(batch_size):
+        #     prog_bar.update()
     return results
 
 
