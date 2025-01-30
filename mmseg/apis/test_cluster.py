@@ -120,7 +120,7 @@ def single_gpu_test(model,
                 print(binary_masks)
                 upsampled_masks = F.interpolate(binary_masks, size=(ori_h, ori_w), mode='nearest').cpu()
                 # 可视化结果
-                num_shows = 10 
+                num_shows = 50 
                 fig, axes = plt.subplots(1, num_shows+1, figsize=(20, 4))
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
