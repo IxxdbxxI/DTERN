@@ -35,6 +35,18 @@ def np2tmp(array, temp_file_name=None):
     image.save(temp_file_name)
     return temp_file_name
 
+def overlay_mask(image, mask, alpha=0.5):
+    """
+    将掩码叠加到原始图像上
+    :param image: 原始图像 (PIL Image)
+    :param mask: 掩码 (numpy array, shape=(H, W, 3))
+    :param alpha: 透明度
+    :return: 叠加后的图像 (PIL Image)
+    """
+    mask_pil = Image.fromarray(mask)
+    overlay = Image.blend(image, mask_pil, alpha=alpha)
+    return overlay
+
 
 def single_gpu_test(model,
                     data_loader,
@@ -127,9 +139,9 @@ def single_gpu_test(model,
 
                 # 可视化结果
                 # num_shows = num_clusters
-                width = 10 
+                width = 15
                 # length =  num_clusters // width + 1
-                length = 4
+                length = 15
                 
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
@@ -151,6 +163,7 @@ def single_gpu_test(model,
                         visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
                         visualization[:, :, 0] = (upsampled_masks[0, i*width+j].numpy() * 255).astype(np.uint8)  # Red channel for important regions
                         visualization[:, :, 2] = ((1 - upsampled_masks[0, i*width+j].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
+                        visualization = overlay_mask(img_show, visualization, alpha=0.5)
                         axes[i % length][j].imshow(visualization)
                         axes[i % length][j].set_title(f"scores:{mean_scores[0, i*width+j].item():.2f}")
                         axes[i % length][j].axis('off')
