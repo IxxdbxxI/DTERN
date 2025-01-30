@@ -83,8 +83,7 @@ def single_gpu_test(model,
 
             print("resulting:")
             img_tensor = data['img'][0]
-            print('img_tensor',img_tensor.shape)
-            b,c,o_h,o_w = img_tensor.shape
+            print(data['img'])
             img_metas = data['img_metas'][0].data[0]
             imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
             assert len(imgs) == len(img_metas)
