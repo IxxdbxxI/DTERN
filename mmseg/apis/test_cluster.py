@@ -80,61 +80,61 @@ def single_gpu_test(model,
             with torch.no_grad():
                 result,assgined_result = model(return_loss=False, **data)
 
-            if show or out_dir:
-                print("resulting:")
-                img_tensor = data['img'][0]
-                print('img_tensor',img_tensor.shape)
-                b,c,o_h,o_w = img_tensor.shape
-                img_metas = data['img_metas'][0].data[0]
-                imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
-                assert len(imgs) == len(img_metas)
 
-                for img, img_meta in zip(imgs, img_metas):
-                    h, w, _ = img_meta['img_shape']
-                    img_show = img[:h, :w, :]
+            print("resulting:")
+            img_tensor = data['img'][0]
+            print('img_tensor',img_tensor.shape)
+            b,c,o_h,o_w = img_tensor.shape
+            img_metas = data['img_metas'][0].data[0]
+            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
+            assert len(imgs) == len(img_metas)
 
-                    ori_h, ori_w = img_meta['ori_shape'][:-1]
-                    img_show = mmcv.imresize(img_show, (ori_w, ori_h))
+            for img, img_meta in zip(imgs, img_metas):
+                h, w, _ = img_meta['img_shape']
+                img_show = img[:h, :w, :]
 
-                    
-                    if out_dir:
-                        out_file = osp.join(out_dir, img_meta['ori_filename'])
-                    else:
-                        out_file = None
+                ori_h, ori_w = img_meta['ori_shape'][:-1]
+                img_show = mmcv.imresize(img_show, (ori_w, ori_h))
 
-                    print("out_file:",out_file)
-                    print("img_show:",img_show.size)
-                    print('assgined_result',assgined_result.shape)
-                    print('assgined_result',result.shape)
+                
+                if out_dir:
+                    out_file = osp.join(out_dir, img_meta['ori_filename'])
+                else:
+                    out_file = None
 
-                    fig, axes = plt.subplots(1, num_clusters+1, figsize=(20, 4))
-                    b,t,num_clusters,_ = assgined_result.shape #[b,t,num_clusters,n]
-                    target_assgined_result = assgined_result[:,-1,:,:]
+                print("out_file:",out_file)
+                print("img_show:",img_show.size)
+                print('assgined_result',assgined_result.shape)
+                print('assgined_result',result.shape)
 
-                    assgined_result_i = target_assgined_result
-                    assgined_result_maps = torch.sigmoid(assgined_result_i)
-                    H_m = assgined_result_maps.view(b,num_clusters,o_h,o_w)
-                    mean_scores = H_m.mean(dim=(2, 3), keepdim=True)  # [b,num_clusters,1,1] softmax是沿着空间维度的
-                    
-                    binary_masks = (H_m > mean_scores).float()  # 生成二值掩码 
-                    upsampled_masks = F.interpolate(binary_masks, size=(224, 224), mode='nearest')
-                    # 可视化结果
-                    img_show = np.array(img_show)
-                    print("array_out",img_show.shape)
-                    axes[0].imshow(img_show)
-                    axes[0].set_title(f"Original Image")
-                    axes[0].axis('off')
-                    for m in range(1,num_clusters):
-                        # 可视化二值掩码
-                        # 可视化重要区域（红色）和不重要区域（蓝色）
-                        visualization = np.zeros((224, 224, 3), dtype=np.uint8)
-                        visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
-                        visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
-                        axes[0, m].imshow(visualization)
-                        axes[0, m].set_title(f"Visualization {m}")
-                        axes[0, m].axis('off')
-                    plt.savefig(temp_file_name)
-                    plt.show()
+                fig, axes = plt.subplots(1, num_clusters+1, figsize=(20, 4))
+                b,t,num_clusters,_ = assgined_result.shape #[b,t,num_clusters,n]
+                target_assgined_result = assgined_result[:,-1,:,:]
+
+                assgined_result_i = target_assgined_result
+                assgined_result_maps = torch.sigmoid(assgined_result_i)
+                H_m = assgined_result_maps.view(b,num_clusters,o_h,o_w)
+                mean_scores = H_m.mean(dim=(2, 3), keepdim=True)  # [b,num_clusters,1,1] softmax是沿着空间维度的
+                
+                binary_masks = (H_m > mean_scores).float()  # 生成二值掩码 
+                upsampled_masks = F.interpolate(binary_masks, size=(224, 224), mode='nearest')
+                # 可视化结果
+                img_show = np.array(img_show)
+                print("array_out",img_show.shape)
+                axes[0].imshow(img_show)
+                axes[0].set_title(f"Original Image")
+                axes[0].axis('off')
+                for m in range(1,num_clusters):
+                    # 可视化二值掩码
+                    # 可视化重要区域（红色）和不重要区域（蓝色）
+                    visualization = np.zeros((224, 224, 3), dtype=np.uint8)
+                    visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
+                    visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
+                    axes[0, m].imshow(visualization)
+                    axes[0, m].set_title(f"Visualization {m}")
+                    axes[0, m].axis('off')
+                plt.savefig(temp_file_name)
+                plt.show()
 
 
         # if not isinstance(data['img'][0], list):
