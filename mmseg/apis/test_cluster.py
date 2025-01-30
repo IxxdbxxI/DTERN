@@ -129,7 +129,7 @@ def single_gpu_test(model,
                 # num_shows = num_clusters
                 width = 10 
                 # length =  num_clusters // width + 1
-                length = 2
+                length = 4
                 
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
@@ -137,7 +137,7 @@ def single_gpu_test(model,
                 # 可视化每个cluster的结果
                 for i in range(num_clusters//width+1):
                     if i % length == 0:
-                        fig, axes = plt.subplots(length, width, figsize=(50, 50))
+                        fig, axes = plt.subplots(length, width, figsize=(500, 50))
                         axes[0,0].imshow(img_show)
                         axes[0,0].set_title(f"Original Image")
                         axes[0,0].axis('off')
