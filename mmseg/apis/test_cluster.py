@@ -151,9 +151,9 @@ def single_gpu_test(model,
                         visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
                         visualization[:, :, 0] = (upsampled_masks[0, i*width+j].numpy() * 255).astype(np.uint8)  # Red channel for important regions
                         visualization[:, :, 2] = ((1 - upsampled_masks[0, i*width+j].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
-                        axes[i][j].imshow(visualization)
-                        axes[i][j].set_title(f"{i*width+j},scores:{mean_scores[0, i*width+j].item():.2f}")
-                        axes[i][j].axis('off')
+                        axes[i % length][j].imshow(visualization)
+                        axes[i % length][j].set_title(f"scores:{mean_scores[0, i*width+j].item():.2f}")
+                        axes[i % length][j].axis('off')
                         j += 1
 
                     if (i+1) % length == 0 or i*width+j < num_clusters:
