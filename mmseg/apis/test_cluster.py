@@ -80,7 +80,6 @@ def single_gpu_test(model,
             with torch.no_grad():
                 result,assgined_result = model(return_loss=False, **data)
 
-
             print("resulting:")
             img_tensor = data['img'][0][0]
             print("img_tensor:",img_tensor.shape)
@@ -112,7 +111,7 @@ def single_gpu_test(model,
 
                 assgined_result_i = target_assgined_result
                 assgined_result_maps = torch.sigmoid(assgined_result_i)
-                H_m = assgined_result_maps.view(b,num_clusters,106,60)
+                H_m = assgined_result_maps.view(b,num_clusters,60,108)
                 mean_scores = H_m.mean(dim=(2, 3), keepdim=True)  # [b,num_clusters,1,1] softmax是沿着空间维度的
                 
                 binary_masks = (H_m > mean_scores).float()  # 生成二值掩码 
