@@ -94,6 +94,7 @@ def single_gpu_test(model,
                 img_show = img[:h, :w, :]
 
                 ori_h, ori_w = img_meta['ori_shape'][:-1]
+
                 img_show = mmcv.imresize(img_show, (ori_w, ori_h))
 
                 
@@ -109,21 +110,22 @@ def single_gpu_test(model,
 
                 b,t,num_clusters,_ = assgined_result.shape #[b,t,num_clusters,n]
                 target_assgined_result = assgined_result[:,-1,:,:]
-                fig, axes = plt.subplots(1, num_clusters+1, figsize=(20, 4))
                 assgined_result_i = target_assgined_result
                 assgined_result_maps = torch.sigmoid(assgined_result_i)
                 H_m = assgined_result_maps.view(b,num_clusters,60,108)
                 mean_scores = H_m.mean(dim=(2, 3), keepdim=True)  # [b,num_clusters,1,1] softmax是沿着空间维度的
                 
                 binary_masks = (H_m > mean_scores).float()  # 生成二值掩码 
-                upsampled_masks = F.interpolate(binary_masks, size=(224, 224), mode='nearest').cpu()
+                upsampled_masks = F.interpolate(binary_masks, size=(ori_h, ori_w), mode='nearest').cpu()
                 # 可视化结果
+                num_shows = 10 
+                fig, axes = plt.subplots(1, num_shows+1, figsize=(20, 4))
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
                 axes[0].imshow(img_show)
                 axes[0].set_title(f"Original Image")
                 axes[0].axis('off')
-                for m in range(1,num_clusters):
+                for m in range(1,num_shows):
                     # 可视化二值掩码
                     # 可视化重要区域（红色）和不重要区域（蓝色）
                     visualization = np.zeros((224, 224, 3), dtype=np.uint8)
