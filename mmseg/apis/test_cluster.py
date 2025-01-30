@@ -38,7 +38,7 @@ def np2tmp(array, temp_file_name=None):
 
 def single_gpu_test(model,
                     data_loader,
-                    show=False,
+                    show=True,
                     out_dir=None,
                     efficient_test=False,lists=['23_XmN5TD3AjMY','50_9mZFBNGzmok','127_-hIVCYO4C90','736_ML-JwZIxno0']):
     """Test with single GPU.
@@ -65,7 +65,7 @@ def single_gpu_test(model,
     for i, data in enumerate(data_loader):
         file_name = data['img_metas'][0].data[0][0]['filename']
         cd_name = file_name.split('/')[-3]
-        print("cd_name",cd_name)
+
         if lists is not None and cd_name in lists: 
             pre_file_name = file_name.split('/')[-3]
             dir_pred = '/kaggle/working/results/'+pre_file_name # lsk3  iter_15600
