@@ -44,7 +44,8 @@ def overlay_mask(image, mask, alpha=0.5):
     :return: 叠加后的图像 (PIL Image)
     """
     mask_pil = Image.fromarray(mask)
-    overlay = Image.blend(image, mask_pil, alpha=alpha)
+    mask_pil = Image.fromarray(mask.astype(np.uint8))
+    overlay = Image.blend(mask_pil, mask_pil, alpha=alpha)
     return overlay
 
 
@@ -164,7 +165,7 @@ def single_gpu_test(model,
                         visualization[:, :, 0] = (upsampled_masks[0, i*width+j].numpy() * 255).astype(np.uint8)  # Red channel for important regions
                         visualization[:, :, 2] = ((1 - upsampled_masks[0, i*width+j].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
                         visualization = overlay_mask(img_show, visualization, alpha=0.5)
-                        axes[i % length][j].imshow(visualization)
+                        axes[i % length][j].imshow(visualization.astype(np.uint8))
                         axes[i % length][j].set_title(f"scores:{mean_scores[0, i*width+j].item():.2f}")
                         axes[i % length][j].axis('off')
                         j += 1
