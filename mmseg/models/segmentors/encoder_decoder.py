@@ -370,14 +370,14 @@ class EncoderDecoder_clips(BaseSegmentor):
         map of the same size as input."""
         # print("encode_decode",img_metas)
         x = self.extract_feat(img)
-        out = self._decode_head_forward_test(x, img_metas, batch_size, num_clips)
+        out,cluster_assignments = self._decode_head_forward_test(x, img_metas, batch_size, num_clips)
         # print(out.shape, img.shape[2:])
         out = resize(
             input=out,
             size=img.shape[2:],
             mode='bilinear',
             align_corners=self.align_corners)
-        return out
+        return out,cluster_assignments
 
     def _decode_head_forward_train(self, x, img_metas, gt_semantic_seg,batch_size, num_clips):
         """Run forward function and calculate loss for decode head in
