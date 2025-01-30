@@ -1229,7 +1229,7 @@ class hypercorre_topk2(nn.Module):
                 x,z,assigned_results = self.cluster_blocks[idx](x, H=H, W=W, z=z, mem = memory) #聚类学习[b,n,c]
             else:
                 x,_,_ = self.cluster_blocks[idx](x, H=H, W=W) # 自身的加强
-            print("layer{idx}: assigned_results",assigned_results.shape)
+            print("layer{idx}: assigned_results",assigned_results)
         
         # z: cluster # [b,num_clusters,tn] assigned_results:[b,t,num_clusters,n]
         # print("z",z.shape)
