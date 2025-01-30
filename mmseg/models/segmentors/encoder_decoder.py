@@ -396,8 +396,8 @@ class EncoderDecoder_clips(BaseSegmentor):
         inference."""
         # print("_decode_head_forward_test",img_metas)
         
-        seg_logits = self.decode_head.forward_test(x, img_metas, self.test_cfg, batch_size, num_clips)
-        return seg_logits
+        seg_logits,cluster_assignments = self.decode_head.forward_test(x, img_metas, self.test_cfg, batch_size, num_clips)
+        return seg_logits,cluster_assignments
 
     def _auxiliary_head_forward_train(self, x, img_metas, gt_semantic_seg):
         """Run forward function and calculate loss for auxiliary head in
@@ -510,7 +510,7 @@ class EncoderDecoder_clips(BaseSegmentor):
     def whole_inference(self, img, img_meta, rescale, batch_size, num_clips):
         """Inference with full image."""
 
-        seg_logit = self.encode_decode(img, img_meta, batch_size, num_clips)
+        seg_logit,cluster_assignments = self.encode_decode(img, img_meta, batch_size, num_clips)
         # print(seg_logit.shape)
         # print(img_meta[0]['ori_shape'][:2])
         if rescale:
@@ -521,7 +521,7 @@ class EncoderDecoder_clips(BaseSegmentor):
                 align_corners=self.align_corners,
                 warning=False)
 
-        return seg_logit
+        return seg_logit,cluster_assignments
 
     def inference(self, img, img_meta, rescale, batch_size, num_clips):
         """Inference with slide/whole style.
@@ -543,9 +543,9 @@ class EncoderDecoder_clips(BaseSegmentor):
         ori_shape = img_meta[0]['ori_shape']
         assert all(_['ori_shape'] == ori_shape for _ in img_meta)
         if self.test_cfg.mode == 'slide':
-            seg_logit = self.slide_inference(img, img_meta, rescale, batch_size, num_clips)
+            seg_logit,cluster_assignments = self.slide_inference(img, img_meta, rescale, batch_size, num_clips)
         else:
-            seg_logit = self.whole_inference(img, img_meta, rescale, batch_size, num_clips)
+            seg_logit,cluster_assignments = self.whole_inference(img, img_meta, rescale, batch_size, num_clips)
         # print(seg_logit.shape)
         output = F.softmax(seg_logit, dim=1)
         flip = img_meta[0]['flip']
@@ -557,7 +557,7 @@ class EncoderDecoder_clips(BaseSegmentor):
             elif flip_direction == 'vertical':
                 output = output.flip(dims=(2, ))
 
-        return output
+        return output,cluster_assignments
 
     def simple_test(self, img, img_meta, rescale=True):
         """Simple test with single image."""
@@ -578,7 +578,7 @@ class EncoderDecoder_clips(BaseSegmentor):
 
         img=img.reshape(batch_size*num_clips, -1, h,w)
         # exit()
-        seg_logit = self.inference(img, img_meta, rescale, batch_size, num_clips)
+        seg_logit,cluster_assignments = self.inference(img, img_meta, rescale, batch_size, num_clips)
         seg_pred = seg_logit.argmax(dim=1)
         if torch.onnx.is_in_onnx_export():
             # our inference backend only support 4D output
@@ -587,7 +587,7 @@ class EncoderDecoder_clips(BaseSegmentor):
         seg_pred = seg_pred.cpu().numpy()
         # unravel batch dim
         seg_pred = list(seg_pred)
-        return seg_pred
+        return seg_pred,cluster_assignments
 
     def aug_test(self, imgs, img_metas, rescale=True):
         """Test with augmentations.

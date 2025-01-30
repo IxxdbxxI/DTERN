@@ -792,7 +792,9 @@ class BaseDecodeHead_clips2(nn.Module, metaclass=ABCMeta):
         Returns:
             Tensor: Output segmentation map.
         """
-        return self.forward(inputs, batch_size, num_clips,img_metas=img_metas)
+        test_cluster_assign = True
+        seg_logits,cluster_assignments=self.forward(inputs, batch_size, num_clips,img_metas=img_metas)
+        return seg_logits,cluster_assignments
 
     def cls_seg(self, feat):
         """Classify each pixel."""
