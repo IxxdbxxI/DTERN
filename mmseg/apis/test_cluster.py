@@ -131,13 +131,14 @@ def single_gpu_test(model,
                     plt.savefig(temp_file_name)
                     plt.show()
 
+
             if not isinstance(data['img'][0], list):
                 batch_size = data['img'][0].size(0)
             else:
                 batch_size = data['img'][0][0].size(0)
             # print(data['img'][0].shape)
-        for _ in range(batch_size):
-            prog_bar.update()
+            for _ in range(batch_size):
+                prog_bar.update()
     return results
 
 
