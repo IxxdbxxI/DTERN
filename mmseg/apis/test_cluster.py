@@ -79,7 +79,9 @@ def single_gpu_test(model,
             temp_file_name = temp_file_name.replace('.npy','.png')
             with torch.no_grad():
                 result,assgined_result = model(return_loss=False, **data)
-
+            
+            if assgined_result is None:
+                continue
             print("resulting:")
             img_tensor = data['img'][0][0]
             print("img_tensor:",img_tensor.shape)
