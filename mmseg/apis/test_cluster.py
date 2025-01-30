@@ -103,9 +103,9 @@ def single_gpu_test(model,
                     out_file = None
 
                 print("out_file:",out_file)
-                print("img_show:",img_show.size)
+                print("img_show:",img_show.shape)
                 print('assgined_result',assgined_result.shape)
-                print('assgined_result',result.shape)
+                # print('assgined_result',result.shape)
 
                 fig, axes = plt.subplots(1, num_clusters+1, figsize=(20, 4))
                 b,t,num_clusters,_ = assgined_result.shape #[b,t,num_clusters,n]
