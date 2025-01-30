@@ -107,10 +107,9 @@ def single_gpu_test(model,
                 print('assgined_result',assgined_result.shape)
                 # print('assgined_result',result.shape)
 
-                fig, axes = plt.subplots(1, num_clusters+1, figsize=(20, 4))
                 b,t,num_clusters,_ = assgined_result.shape #[b,t,num_clusters,n]
                 target_assgined_result = assgined_result[:,-1,:,:]
-
+                fig, axes = plt.subplots(1, num_clusters+1, figsize=(20, 4))
                 assgined_result_i = target_assgined_result
                 assgined_result_maps = torch.sigmoid(assgined_result_i)
                 H_m = assgined_result_maps.view(b,num_clusters,60,108)
