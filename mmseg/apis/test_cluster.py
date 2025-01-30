@@ -69,7 +69,7 @@ def single_gpu_test(model,
         if lists is not None and cd_name in lists: 
             pre_file_name = file_name.split('/')[-3]
             dir_pred = '/kaggle/working/results/'+pre_file_name # lsk3  iter_15600
-
+            print("process file:",pre_file_name)
             if not os.path.exists(dir_pred):
                 os.mkdir(dir_pred)
 
@@ -81,6 +81,7 @@ def single_gpu_test(model,
                 result,assgined_result = model(return_loss=False, **data)
 
             if show or out_dir:
+                print("resulting:")
                 img_tensor = data['img'][0]
                 print('img_tensor',img_tensor.shape)
                 b,c,o_h,o_w = img_tensor.shape
