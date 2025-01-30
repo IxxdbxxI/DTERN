@@ -1375,11 +1375,11 @@ class SegFormerHead_clips2_resize_1_8_Cluster_SegDeformer_ensemble4(BaseDecodeHe
         x = self.dropout(_c)
         x = self.linear_pred(x)
         x = x.reshape(batch_size, num_clips, -1, h, w) #(b,t,c,h,w)
-
+        assigned_results = None        # if self.self_ensemble2:
         # print(x.shape)
         if not self.training and num_clips!=self.num_clips:
         # if not self.training:
-            return x[:,-1] #(b,c,h,w)
+            return x[:,-1],assigned_results #(b,c,h,w)
 
         # if not self.training and num_clips!=self.num_clips:
         #     return x[:,-1]
@@ -1410,9 +1410,9 @@ class SegFormerHead_clips2_resize_1_8_Cluster_SegDeformer_ensemble4(BaseDecodeHe
         out_cls_mid = None
 
         if self.need_segdeformer:
-            supp_feats,out_cls_mid,cluster_centers,mem_out=self.hypercorre_module(query_frame, supp_frame,img_metas = img_metas) # target: [2 [b,c,h,w]] cluster_centers:[b,t,num_clusters,c,h,w]
+            supp_feats,out_cls_mid,cluster_centers,mem_out,assigned_results=self.hypercorre_module(query_frame, supp_frame,img_metas = img_metas) # target: [2 [b,c,h,w]] cluster_centers:[b,t,num_clusters,c,h,w]
         else:
-            supp_feats,cluster_centers=self.hypercorre_module(query_frame, supp_frame,img_metas = img_metas)
+            supp_feats,cluster_centers,assigned_results=self.hypercorre_module(query_frame, supp_frame,img_metas = img_metas)
 
         # 测试只要decoder结果
         if self.test_only_decoder:
@@ -1443,7 +1443,7 @@ class SegFormerHead_clips2_resize_1_8_Cluster_SegDeformer_ensemble4(BaseDecodeHe
                 output=torch.cat([x,x2],dim=1)   ## b*(k+2)*124*h*w
 
         if not self.training:
-            return x2.squeeze(1)
+            return x2.squeeze(1),assigned_results
         return output,cluster_centers
         # return output
 

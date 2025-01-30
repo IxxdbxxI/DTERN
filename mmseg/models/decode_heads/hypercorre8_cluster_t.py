@@ -628,6 +628,7 @@ class Cluster_layer(nn.Module):
             z:[b,num_clusters,tn] # 选择迭代更新
         '''
         res = x
+        assigned_results = None
         if mem is not None:
             x = torch.cat([mem.view(-1,t,mem.shape[-2],mem.shape[-1]),x.unsqueeze(1)],dim=1) #[b,t,n,c]
             x = x.flatten(0,1) #[bt,n,c]
@@ -697,6 +698,7 @@ class Cluster_layer(nn.Module):
                 if self.inner_center:
                     # # inner_time_cluster + cross_time_cluster   
                     center = rearrange(cluster_x_z,"b c (t n) -> b t c n",t = t)
+                    assigned_results = center
                     center = center.softmax(dim=-1) # [b,t,num_clusters,n]
                     center_x = rearrange(x,"(b t) n c -> b t n c",t=t)
                     center = center @ center_x #[b,t,num_clusters,c]
@@ -741,8 +743,7 @@ class Cluster_layer(nn.Module):
         
         out = res + self.norm1(out)
         out = out + self.norm1(self.mlp(out,H,W))
-
-        return out,cluster_x_z
+        return out,cluster_x_z,assigned_results
     
 # 原型一致化时间,from A Transformer-based Decoder for Semantic Segmentation with Multi-level Context Mining iccv22
 # 设计能够有效缓解segformer的尺度拼接问题 # 用于画图,直接改里面参数名称,把Class_Token_Seg3和TransformerClassToken3修改成External_Cluster_decoder
@@ -1225,13 +1226,13 @@ class hypercorre_topk2(nn.Module):
         mem_out=None
         for idx in range(self.num_layers):
             if idx == 0:
-                x,z = self.cluster_blocks[idx](src, H=H, W=W, mem = memory)
+                x,z,assigned_results = self.cluster_blocks[idx](src, H=H, W=W, mem = memory)
             elif idx == 1:
-                x,z = self.cluster_blocks[idx](x, H=H, W=W, z=z, mem = memory) #聚类学习[b,n,c]
+                x,z,assigned_results = self.cluster_blocks[idx](x, H=H, W=W, z=z, mem = memory) #聚类学习[b,n,c]
             else:
-                x,_ = self.cluster_blocks[idx](x, H=H, W=W) # 自身的加强
+                x,_,_ = self.cluster_blocks[idx](x, H=H, W=W) # 自身的加强
         
-        # z: cluster # [b,num_clusters,tn]
+        # z: cluster # [b,num_clusters,tn] assigned_results:[b,t,num_clusters,n]
         # print("z",z.shape)
         if z is not None:
             z = rearrange(z,'b c (t h w) -> b t c h w',t=T_pre+T_tg,h=H,w=W)
@@ -1247,8 +1248,8 @@ class hypercorre_topk2(nn.Module):
         
             out_new=(torch.chunk(out_new, T_tg, dim=1))
             out_new=[ii.squeeze(1) for ii in out_new] # focal情况下就是对所有帧的分割细化(还对目标帧进行了更新)，CAT就是对目标帧的分割细化
-            return out_new,out_cls_mid.squeeze(1),z,mem_out #[b,c,h,w]
+            return out_new,out_cls_mid.squeeze(1),z,mem_out,assigned_results #[b,c,h,w]
         else:
             out_new=(torch.chunk(x, T_tg, dim=1))
             out_new=[ii.squeeze(1) for ii in out_new] # focal情况下就是对所有帧的分割细化(还对目标帧进行了更新)，CAT就是对目标帧的分割细化
-            return out_new,z
+            return out_new,z,assigned_results
