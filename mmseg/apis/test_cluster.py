@@ -79,9 +79,11 @@ def single_gpu_test(model,
             temp_file_name = temp_file_name.replace('.npy','.png')
             with torch.no_grad():
                 result,assgined_result = model(return_loss=False, **data)
-                _,_,o_h,o_w = result.shape
+
             if show or out_dir:
                 img_tensor = data['img'][0]
+                print('img_tensor',img_tensor.shape)
+                b,c,o_h,o_w = img_tensor.shape
                 img_metas = data['img_metas'][0].data[0]
                 imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
                 assert len(imgs) == len(img_metas)
