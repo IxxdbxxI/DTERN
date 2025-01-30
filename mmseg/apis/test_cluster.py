@@ -128,7 +128,7 @@ def single_gpu_test(model,
                 for m in range(1,num_shows):
                     # 可视化二值掩码
                     # 可视化重要区域（红色）和不重要区域（蓝色）
-                    visualization = np.zeros((224, 224, 3), dtype=np.uint8)
+                    visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
                     visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
                     visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
                     axes[m].imshow(visualization)
