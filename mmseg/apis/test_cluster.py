@@ -118,7 +118,7 @@ def single_gpu_test(model,
                 
                 binary_masks = (H_m > mean_scores).float()  # 生成二值掩码 
                 # print(binary_masks)
-                upsampled_masks = F.interpolate(binary_masks, size=(ori_h, ori_w), mode='nearest')
+                upsampled_masks = F.interpolate(binary_masks, size=(ori_h, ori_w), mode='nearest').cpu()
                 # # 根据mean_scores 按照从大到小对channel进行排序
                 # sorted_mean_scores, sorted_indices = torch.sort(mean_scores, dim=1, descending=True)
                 # # sorted_binary_masks = binary_masks.gather(1, sorted_indices)
@@ -148,7 +148,7 @@ def single_gpu_test(model,
                         axes[i][j].set_title(f"{i*width+j},scores:{mean_scores[0, i*width+j].item():.2f}")
                         axes[i][j].axis('off')
                         j += 1
-                        
+
                 plt.savefig(temp_file_name)
                 plt.show()
 
