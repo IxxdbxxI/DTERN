@@ -120,18 +120,18 @@ def single_gpu_test(model,
                 # 可视化结果
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
-                axes[0,0].imshow(img_show)
-                axes[0,0].set_title(f"Original Image")
-                axes[0,0].axis('off')
+                axes[0].imshow(img_show)
+                axes[0].set_title(f"Original Image")
+                axes[0].axis('off')
                 for m in range(1,num_clusters):
                     # 可视化二值掩码
                     # 可视化重要区域（红色）和不重要区域（蓝色）
                     visualization = np.zeros((224, 224, 3), dtype=np.uint8)
                     visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
                     visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
-                    axes[0, m].imshow(visualization)
-                    axes[0, m].set_title(f"Visualization {m}")
-                    axes[0, m].axis('off')
+                    axes[m].imshow(visualization)
+                    axes[m].set_title(f"Visualization {m}")
+                    axes[m].axis('off')
                 plt.savefig(temp_file_name)
                 plt.show()
 
