@@ -142,7 +142,7 @@ def main():
     # print("efficient_test", efficient_test)
     if not distributed:
         model = MMDataParallel(model, device_ids=[0])
-        outputs = test_cluster_single_gpu_test(model, data_loader, args.show, args.show_dir,
+        _ = test_cluster_single_gpu_test(model, data_loader, args.show, args.show_dir,
                                   efficient_test)
     else:
         # print("args.gpu_collect",args.gpu_collect) #False
