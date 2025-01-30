@@ -77,6 +77,7 @@ def single_gpu_test(model,
             last_file_name = last_file_name.split('/')[-1].replace('.png', '.npy')
             temp_file_name = os.path.join(dir_pred, last_file_name)
             temp_file_name = temp_file_name.replace('.npy','.png')
+            pre_file = last_file_name.split('/')[-1].replace('.npy', '')
             with torch.no_grad():
                 result,assgined_result = model(return_loss=False, **data)
             
@@ -125,21 +126,27 @@ def single_gpu_test(model,
                 # upsampled_masks = upsampled_masks.gather(1, sorted_indices).cpu()
 
                 # 可视化结果
-                num_shows = num_clusters
+                # num_shows = num_clusters
                 width = 10 
-                length =  num_clusters // width + 1
-                fig, axes = plt.subplots(length, width, figsize=(200, 800))
+                # length =  num_clusters // width + 1
+                length = 2
+                
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
-                axes[0,0].imshow(img_show)
-                axes[0,0].set_title(f"Original Image")
-                axes[0,0].axis('off')
+
                 # 可视化每个cluster的结果
-                for i in range(length):
-                    if i == 1:
+                for i in range(num_clusters//width+1):
+                    if i % length == 0:
+                        fig, axes = plt.subplots(length, width, figsize=(200, 800))
+                        axes[0,0].imshow(img_show)
+                        axes[0,0].set_title(f"Original Image")
+                        axes[0,0].axis('off')
+
+                    if i == 0:
                         j=1
                     else:
                         j=0
+
                     while j < width and i*width+j < num_clusters:
                         visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
                         visualization[:, :, 0] = (upsampled_masks[0, i*width+j].numpy() * 255).astype(np.uint8)  # Red channel for important regions
@@ -149,8 +156,9 @@ def single_gpu_test(model,
                         axes[i][j].axis('off')
                         j += 1
 
-                plt.savefig(temp_file_name)
-                plt.show()
+                    if (i+1) % length == 0 or i*width+j < num_clusters:
+                        plt.savefig(os.path.join(dir_pred, pre_file+'_'+str(i*width+j-1)+'.png'))
+                        plt.show()
 
 
                 # for m in range(1,num_shows):
