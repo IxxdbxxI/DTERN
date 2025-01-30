@@ -1217,8 +1217,6 @@ class hypercorre_topk2(nn.Module):
 
         B,_,C,H,W = memory.shape
         z = None
-
-
         src = rearrange(src,'b t c h w -> (b t) c (h w)')
         memory = rearrange(memory,'b t c h w -> (b t) c (h w)')
         src = src.permute(0,2,1)
