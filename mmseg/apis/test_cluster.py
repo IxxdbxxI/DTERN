@@ -53,7 +53,7 @@ def single_gpu_test(model,
                     data_loader,
                     show=True,
                     out_dir=None,
-                    efficient_test=False,lists=['23_XmN5TD3AjMY','50_9mZFBNGzmok','127_-hIVCYO4C90','736_ML-JwZIxno0']):
+                    efficient_test=False,lists=['23_XmN5TD3AjMY','50_9mZFBNGzmok','736_ML-JwZIxno0']):
     """Test with single GPU.
 
     Args:
@@ -82,7 +82,7 @@ def single_gpu_test(model,
         if lists is not None and cd_name in lists: 
             pre_file_name = file_name.split('/')[-3]
             dir_pred = '/kaggle/working/results/'+pre_file_name # lsk3  iter_15600
-            print("process file:",pre_file_name)
+            # print("process file:",pre_file_name)
             if not os.path.exists(dir_pred):
                 os.mkdir(dir_pred)
 
@@ -96,9 +96,9 @@ def single_gpu_test(model,
             
             if assgined_result is None:
                 continue
-            print("resulting:")
+            # print("resulting:")
             img_tensor = data['img'][0][0]
-            print("img_tensor:",img_tensor.shape)
+            # print("img_tensor:",img_tensor.shape)
             img_metas = data['img_metas'][0].data[0]
             imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
             assert len(imgs) == len(img_metas)
@@ -117,16 +117,16 @@ def single_gpu_test(model,
                 else:
                     out_file = None
 
-                print("out_file:",out_file)
-                print("img_show:",img_show.shape)
-                print('assgined_result',assgined_result.shape)
+                # print("out_file:",out_file)
+                # print("img_show:",img_show.shape)
+                # print('assgined_result',assgined_result.shape)
                 # print('assgined_result',result.shape)
 
                 b,t,num_clusters,_ = assgined_result.shape #[b,t,num_clusters,n]
                 target_assgined_result = assgined_result[:,-1,:,:]
                 assgined_result_i = target_assgined_result
                 assgined_result_maps = torch.sigmoid(assgined_result_i)
-                print("assgined_result_maps:",assgined_result_maps)
+                # print("assgined_result_maps:",assgined_result_maps)
                 H_m = assgined_result_maps.view(b,num_clusters,60,108)
                 mean_scores = H_m.mean(dim=(2, 3), keepdim=True)  # [b,num_clusters,1,1] softmax是沿着空间维度的
                 
@@ -145,7 +145,7 @@ def single_gpu_test(model,
                 length = 15
                 
                 img_show = np.array(img_show)
-                print("array_out",img_show.shape)
+                # print("array_out",img_show.shape)
                 fig, axes = plt.subplots(length, width, figsize=(50, 50))
                 axes[0,0].imshow(img_show)
                 axes[0,0].set_title(f"Original Image")
