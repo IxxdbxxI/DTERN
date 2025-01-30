@@ -132,7 +132,7 @@ def single_gpu_test(model,
                     visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
                     visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
                     axes[m].imshow(visualization)
-                    axes[m].set_title(f"Visualization {m}")
+                    axes[m].set_title(f"{m},scores:{mean_scores[0, m].item():.2f}")
                     axes[m].axis('off')
                 plt.savefig(temp_file_name)
                 plt.show()
