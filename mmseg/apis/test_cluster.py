@@ -117,32 +117,53 @@ def single_gpu_test(model,
                 mean_scores = H_m.mean(dim=(2, 3), keepdim=True)  # [b,num_clusters,1,1] softmax是沿着空间维度的
                 
                 binary_masks = (H_m > mean_scores).float()  # 生成二值掩码 
-                print(binary_masks)
+                # print(binary_masks)
                 upsampled_masks = F.interpolate(binary_masks, size=(ori_h, ori_w), mode='nearest')
-                # 根据mean_scores 按照从大到小对channel进行排序
-                sorted_mean_scores, sorted_indices = torch.sort(mean_scores, dim=1, descending=True)
-                # sorted_binary_masks = binary_masks.gather(1, sorted_indices)
-                upsampled_masks = upsampled_masks.gather(1, sorted_indices).cpu()
+                # # 根据mean_scores 按照从大到小对channel进行排序
+                # sorted_mean_scores, sorted_indices = torch.sort(mean_scores, dim=1, descending=True)
+                # # sorted_binary_masks = binary_masks.gather(1, sorted_indices)
+                # upsampled_masks = upsampled_masks.gather(1, sorted_indices).cpu()
 
                 # 可视化结果
-                num_shows = 10 
-                fig, axes = plt.subplots(1, num_shows+1, figsize=(20, 4))
+                num_shows = num_clusters
+                width = 10 
+                length =  num_clusters // width + 1
+                fig, axes = plt.subplots(length, width, figsize=(20, 4))
                 img_show = np.array(img_show)
                 print("array_out",img_show.shape)
-                axes[0].imshow(img_show)
-                axes[0].set_title(f"Original Image")
-                axes[0].axis('off')
-                for m in range(1,num_shows):
-                    # 可视化二值掩码
-                    # 可视化重要区域（红色）和不重要区域（蓝色）
-                    visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
-                    visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
-                    visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
-                    axes[m].imshow(visualization)
-                    axes[m].set_title(f"{m},scores:{mean_scores[0, m].item():.2f}")
-                    axes[m].axis('off')
+                axes[0,0].imshow(img_show)
+                axes[0,0].set_title(f"Original Image")
+                axes[0,0].axis('off')
+                # 可视化每个cluster的结果
+                for i in range(length):
+                    if i == 1:
+                        j=1
+                    else:
+                        j=0
+                    while j < width and i*width+j < num_clusters:
+                        visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
+                        visualization[:, :, 0] = (upsampled_masks[0, i*width+j].numpy() * 255).astype(np.uint8)  # Red channel for important regions
+                        visualization[:, :, 2] = ((1 - upsampled_masks[0, i*width+j].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
+                        axes[i][j].imshow(visualization)
+                        axes[i][j].set_title(f"{i*width+j},scores:{mean_scores[0, i*width+j].item():.2f}")
+                        axes[i][j].axis('off')
+                        j += 1
+                        
                 plt.savefig(temp_file_name)
                 plt.show()
+
+
+                # for m in range(1,num_shows):
+                #     # 可视化二值掩码
+                #     # 可视化重要区域（红色）和不重要区域（蓝色）
+                #     visualization = np.zeros((ori_h, ori_w, 3), dtype=np.uint8)
+                #     visualization[:, :, 0] = (upsampled_masks[0, m].numpy() * 255).astype(np.uint8)  # Red channel for important regions
+                #     visualization[:, :, 2] = ((1 - upsampled_masks[0, m].numpy()) * 255).astype(np.uint8)  # Blue channel for less important regions
+                #     axes[m].imshow(visualization)
+                #     axes[m].set_title(f"{m},scores:{mean_scores[0, m].item():.2f}")
+                #     axes[m].axis('off')
+                # plt.savefig(temp_file_name)
+                # plt.show()
 
 
         # if not isinstance(data['img'][0], list):
