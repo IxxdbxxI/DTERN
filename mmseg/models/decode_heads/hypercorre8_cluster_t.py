@@ -687,6 +687,9 @@ class Cluster_layer(nn.Module):
                     mask = cos_sim.clamp(0, 1)
                     z = z * mask    #token scaled dot product(对每个token的不同channel同等缩放，对不同的token不同等缩放)
                     print("z1",z)
+                    # 检查z的元素是否全为0
+                    all_zeros = torch.all(z == 0)
+                    print("all_zeros",all_zeros)
                     z = z @ self.top_down_transform1 #(对不同token的同一channel同等缩放，对不同channle不同缩放)
                     print("z2",z)
                     # select:
