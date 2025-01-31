@@ -702,7 +702,7 @@ class Cluster_layer(nn.Module):
                 if self.inner_center:
                     # # inner_time_cluster + cross_time_cluster   
                     center = rearrange(cluster_x_z,"b c (t n) -> b t c n",t = t)
-                    assigned_results = center
+                    assigned_results = center.clone()
                     center = center.softmax(dim=-1) # [b,t,num_clusters,n]
                     center_x = rearrange(x,"(b t) n c -> b t n c",t=t)
                     center = center @ center_x #[b,t,num_clusters,c]
