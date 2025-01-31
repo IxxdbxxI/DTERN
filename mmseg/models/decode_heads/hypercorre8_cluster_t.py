@@ -686,12 +686,16 @@ class Cluster_layer(nn.Module):
                     cos_sim = F.normalize(z, dim=-1) @ F.normalize(self.prompt1[None, ..., None], dim=1)  # B, N, 1 
                     mask = cos_sim.clamp(0, 1)
                     z = z * mask    #token scaled dot product(对每个token的不同channel同等缩放，对不同的token不同等缩放)
+                    print("z1",z)
                     z = z @ self.top_down_transform1 #(对不同token的同一channel同等缩放，对不同channle不同缩放)
+                    print("z2",z)
                     # select:
                     cos_sim = F.normalize(cluster_x_z, dim=-1) @ F.normalize(self.prompt2[None, ..., None], dim=1)  # B, N, 1 
                     mask = cos_sim.clamp(0, 1)
                     cluster_x_z = cluster_x_z * mask
+                    print("cluster_x_z1",cluster_x_z)
                     cluster_x_z = cluster_x_z @ self.top_down_transform2
+                    print("cluster_x_z2",cluster_x_z)
                     cluster_x_z = (cluster_x_z + z)/2.
                     cluster_x_z = rearrange(cluster_x_z,"b n c -> b c n")
 
@@ -1226,7 +1230,7 @@ class hypercorre_topk2(nn.Module):
             if idx == 0:
                 x,z,assigned_results = self.cluster_blocks[idx](src, H=H, W=W, mem = memory)
             elif idx == 1:
-                x,z,_ = self.cluster_blocks[idx](x, H=H, W=W, z=z, mem = memory) #聚类学习[b,n,c]
+                x,z,assigned_results = self.cluster_blocks[idx](x, H=H, W=W, z=z, mem = memory) #聚类学习[b,n,c]
             else:
                 x,_,_ = self.cluster_blocks[idx](x, H=H, W=W) # 自身的加强
             print("layer{idx}: assigned_results",assigned_results.shape)
