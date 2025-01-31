@@ -53,7 +53,7 @@ def single_gpu_test(model,
                     data_loader,
                     show=True,
                     out_dir=None,
-                    efficient_test=False,lists=['736_ML-JwZIxno0']):
+                    efficient_test=False,lists=['50_9mZFBNGzmok']):
     """Test with single GPU.
 
     Args:
