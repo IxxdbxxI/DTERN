@@ -1,4 +1,4 @@
-# VSS-MRCFA
+# DTERN
 Official PyTorch implementation of paper: Dual-Temporal Exemplar Representation Network for Video Semantic Segmentation
 
 ## Abstract
